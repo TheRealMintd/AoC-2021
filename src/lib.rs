@@ -1,4 +1,5 @@
 use aoc_runner_derive::aoc_lib;
 
-aoc_lib!{ year = 2021 }
+pub mod day_1;
 
+aoc_lib! { year = 2021 }
