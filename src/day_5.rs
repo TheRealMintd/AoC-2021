@@ -13,18 +13,18 @@ pub struct VentLine {
 
 #[derive(PartialEq, Eq, Hash)]
 struct Point {
-    x: u32,
-    y: u32,
+    x: u16,
+    y: u16,
 }
 
 impl Point {
-    fn new(x: u32, y: u32) -> Self {
+    fn new(x: u16, y: u16) -> Self {
         Point { x, y }
     }
 }
 
-impl From<(u32, u32)> for Point {
-    fn from((x, y): (u32, u32)) -> Self {
+impl From<(u16, u16)> for Point {
+    fn from((x, y): (u16, u16)) -> Self {
         Self::new(x, y)
     }
 }
@@ -34,7 +34,7 @@ pub fn input_generator(input: &str) -> Vec<VentLine> {
     input
         .lines()
         .map(|line| {
-            let points: ((u32, u32), (u32, u32)) = line
+            let points: ((u16, u16), (u16, u16)) = line
                 .split(" -> ")
                 .map(|coordinates| {
                     coordinates
@@ -74,8 +74,8 @@ pub fn solve_part1(input: &[VentLine]) -> usize {
             *map.entry(point).or_insert(0) += 1;
             map
         })
-        .into_iter()
-        .filter(|(_, count)| *count > 1)
+        .into_values()
+        .filter(|count| *count > 1)
         .count()
 }
 
@@ -93,28 +93,25 @@ pub fn solve_part2(input: &[VentLine]) -> usize {
                     .map(|x| (x, vent.end_one.y).into())
                     .collect()
             } else {
-                let x_range: Box<dyn Iterator<Item = u32>> = if vent.end_one.x > vent.end_two.x {
+                let x_range: Box<dyn Iterator<Item = u16>> = if vent.end_one.x > vent.end_two.x {
                     Box::new((vent.end_two.x..=vent.end_one.x).rev())
                 } else {
                     Box::new(vent.end_one.x..=vent.end_two.x)
                 };
-                let y_range: Box<dyn Iterator<Item = u32>> = if vent.end_one.y > vent.end_two.y {
+                let y_range: Box<dyn Iterator<Item = u16>> = if vent.end_one.y > vent.end_two.y {
                     Box::new((vent.end_two.y..=vent.end_one.y).rev())
                 } else {
                     Box::new(vent.end_one.y..=vent.end_two.y)
                 };
 
-                x_range
-                    .zip(y_range)
-                    .map(|coordinates| coordinates.into())
-                    .collect()
+                x_range.zip(y_range).map_into().collect()
             }
         })
         .fold(HashMap::new(), |mut map: HashMap<_, u32>, point| {
             *map.entry(point).or_insert(0) += 1;
             map
         })
-        .into_iter()
-        .filter(|(_, count)| *count > 1)
+        .into_values()
+        .filter(|count| *count > 1)
         .count()
 }
