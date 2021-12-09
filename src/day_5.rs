@@ -57,7 +57,7 @@ pub fn input_generator(input: &str) -> Vec<VentLine> {
 #[aoc(day5, part1)]
 pub fn solve_part1(input: &[VentLine]) -> usize {
     input
-        .into_iter()
+        .iter()
         .filter(|vent| vent.end_one.x == vent.end_two.x || vent.end_one.y == vent.end_two.y)
         .flat_map::<Vec<Point>, _>(|vent| {
             if vent.end_one.x == vent.end_two.x {
@@ -82,7 +82,7 @@ pub fn solve_part1(input: &[VentLine]) -> usize {
 #[aoc(day5, part2)]
 pub fn solve_part2(input: &[VentLine]) -> usize {
     input
-        .into_iter()
+        .iter()
         .flat_map::<Vec<Point>, _>(|vent| {
             if vent.end_one.x == vent.end_two.x {
                 (min(vent.end_one.y, vent.end_two.y)..=max(vent.end_one.y, vent.end_two.y))
