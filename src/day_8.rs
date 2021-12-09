@@ -15,7 +15,7 @@ impl NoteEntry {
         P: Fn(&EnumSet<State>) -> bool,
     {
         let index = self.signals.iter().position(predicate).unwrap();
-        self.signals.remove(index)
+        self.signals.swap_remove(index)
     }
 }
 
@@ -107,37 +107,41 @@ pub fn solve_part2(input: &[NoteEntry]) -> usize {
             }
 
             // find the rest
+            // 6 is the only number that is a superset of !1
+            known_numbers.insert(
+                entry.get_state(|state| {
+                    state.is_superset(!*known_numbers.get_by_right(&1).unwrap())
+                }),
+                6,
+            );
+            // 9 is the only number that is a superset of 4
+            known_numbers.insert(
+                entry
+                    .get_state(|state| state.is_superset(*known_numbers.get_by_right(&4).unwrap())),
+                9,
+            );
+            // 3 is the only 5-segment number that is a superset of 1
             known_numbers.insert(
                 entry.get_state(|state| {
                     state.len() == 5 && state.is_superset(*known_numbers.get_by_right(&1).unwrap())
                 }),
                 3,
             );
+            // 0 is the only number left that is a superset of 1
+            known_numbers.insert(
+                entry
+                    .get_state(|state| state.is_superset(*known_numbers.get_by_right(&1).unwrap())),
+                0,
+            );
+            // 2 is a superset of !4
             known_numbers.insert(
                 entry.get_state(|state| {
-                    state.len() == 5
-                        && (*state ^ *known_numbers.get_by_right(&4).unwrap()).len() == 5
+                    state.len() == 5 && state.is_superset(!*known_numbers.get_by_right(&4).unwrap())
                 }),
                 2,
             );
-            known_numbers.insert(entry.get_state(|state| state.len() == 5), 5);
-            known_numbers.insert(
-                entry.get_state(|state| {
-                    *state
-                        == (*known_numbers.get_by_right(&1).unwrap()
-                            | *known_numbers.get_by_right(&5).unwrap())
-                }),
-                9,
-            );
-            known_numbers.insert(
-                entry.get_state(|state| {
-                    *state
-                        == !(!*known_numbers.get_by_right(&5).unwrap()
-                            & *known_numbers.get_by_right(&1).unwrap())
-                }),
-                6,
-            );
-            known_numbers.insert(entry.get_state(|_| true), 0);
+            // the last number left
+            known_numbers.insert(entry.get_state(|_| true), 5);
 
             entry
                 .digits
