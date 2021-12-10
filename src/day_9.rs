@@ -123,6 +123,6 @@ mod tests {
     #[test]
     fn test_part1() {
         let input = "2199943210\n3987894921\n9856789892\n8767896789\n9899965678";
-        assert_eq!(solve_part1(&input_generator1(input)), 15);
+        assert_eq!(solve_part1(&input_generator(input)), 15);
     }
 }
